@@ -1,0 +1,6 @@
+Follow these steps to compile and install the kernel modules:
+
+1. Edit the Makefile to point to your kernel
+2. make
+3. sudo make install
+4. cd ..; cat README

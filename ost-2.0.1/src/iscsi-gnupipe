@@ -1,0 +1,83 @@
+#!/usr/bin/perl
+
+require "flush.pl";
+
+$! = 1;
+
+if (@ARGV == 6) {
+    $tid = $ARGV[0];
+    $metric = $ARGV[1];
+    $secs = $ARGV[2];
+    $window = $ARGV[3];
+    $plot = $ARGV[4];
+    $config = $ARGV[5];
+
+    chop($host = `hostname`);
+    chop($target = `utest -t $tid -c $config`);
+    $target =~ /Vendor:\s*(\S+)\s*Model:\s*(.+)\s*Rev:/;
+
+    $title = "iSCSI Target Performance ($host)";
+    $title2 = $1." ".$2; 
+    $title2 = "";
+
+    $file = "/tmp/$tid.$metric";
+    $driver_error = "/tmp/$tid.driver_error";
+    $target_error = "/tmp/$tid.target_error";
+    if ($plot) {
+        open (HANDLE, "|gnuplot -noraise -geometry 400x200");
+    }
+    $i=0;
+    while (<stdin>) {
+        chop;
+        %vals = split;
+        $val = $vals{$metric};
+        system("echo $i $val >> $file.iscsi_raw");
+        $num = $window+1;
+        system("tail -n $num $file.iscsi_raw > $file.iscsi_plt");
+        if ($plot) {
+            $error = "";
+            if (-f $driver_error) {
+                $error .= " DRIVER ERROR ";
+                system("rm -f $driver_error");
+            }
+            if (-f $target_error) {
+                $error .= " TARGET ERROR ";
+                system("rm -f $target_error");
+            }
+            print HANDLE "set title \"$title $error\"\n";
+            #print HANDLE "set xlabel \"Time ($secs sec increments)\"\n";
+            print HANDLE "set ylabel \"Performance ($metric)\"\n";
+            if ($i<=$window) {
+              $j = 0; 
+              $k = $window;
+            } else {
+              $j = $i-$window;
+              $k = $i;
+            }
+            #print HANDLE "plot [$j:$k] [0:120] ";
+            print HANDLE "plot ";
+            print HANDLE "\"$file.iscsi_plt\" with lines title \"$title2\"\n";
+            flush(HANDLE);
+        }
+        $i+=$secs;
+    }
+    close(HANDLE);
+} else {
+    open (HANDLE, "|gnuplot");
+    while (1) {
+        chop(@list = `ls /tmp/*.iscsi_plt`);
+        print HANDLE "plot ";
+        $i=0;
+        foreach $file (@list) {
+            $i++;
+            if ($i<@list) {
+                print HANDLE "\"$file\" with lines, ";
+            } else {
+                print HANDLE "\"$file\" with lines\n";
+            }
+        }
+        flush(HANDLE);
+        sleep(1);
+    }
+    close(HANDLE);
+}

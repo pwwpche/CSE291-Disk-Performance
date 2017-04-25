@@ -1,0 +1,57 @@
+#!/usr/bin/perl
+
+$| = 1; # Turns off output buffering
+
+#
+# This scripts calculates the diff between two sets of counters.
+#
+
+#
+# Read in the first set of counters (A)
+#
+# format is "name1 val1 name2 val2 name3 val3 ..."
+#
+
+do {
+    chop($_=<STDIN>);
+} until (!(/^\*/||/WARNING/));
+
+if (!length($_)) {
+    exit;
+}
+
+again: @A = split;
+
+#
+# Read in the second set of counters (B)
+#
+
+chop($_=<STDIN>);
+if (!length($_)) {
+    exit;
+}
+@B = split;
+
+#
+# Calculating diff between A and B (element-wise)
+#
+
+for ($i=0; $i<@A; $i++) {
+    $i++;
+    $val{$A[$i-1]} = $B[$i]-$A[$i];
+} 
+
+#
+# Output the diffs
+#
+
+foreach $key (keys %val) {
+    print "$key $val{$key} ";
+}
+printf("\n");
+
+#
+# Set A to B and repeat
+#
+
+@A = @B; goto again;

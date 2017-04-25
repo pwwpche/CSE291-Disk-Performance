@@ -1,0 +1,193 @@
+  
+================================================================================
+
+                          Open Storage Toolkit
+
+                               Version 2.0
+
+   *** Compiled and tested on Linux kernel versions 2.6.30 through 2.6.37 ***   
+
+================================================================================
+
+ Main components:
+
+            ----    -------     -----------
+            File    Runs on     Description
+            ----    -------     -----------
+  intel_iscsi.ko       Host     iSCSI Initiator (with SCSI RAMDISK support)
+   /etc/ips.conf       Host     Script to start/stop the initiator module
+           utest       Host     Simple performance and conformance test 
+         fitness       Host     Block-level workload generator
+   iscsi-monitor       Host     Performance monitoring (pipes to gnuplot)
+           udisk     Target     User-level iSCSI target (block device)
+            uosd     Target     User-level iSCSI target (object-based storage)
+
+================================================================================
+              Compiling and installing the user-level executables               
+               (utest, fitness, iscsi-monitor, udisk, and uosd)
+================================================================================
+
+1. Configure the package and specify the installation directory.
+
+   By default, the executables will be installed in /bin and the ips.conf
+   configuration file in /etc.  You can override these default locations
+   using the --prefix option, or the --bindir and --sysconfdir options.
+   Below are some examples.
+
+   Run configure without any options to use the default locations:
+
+	./configure
+
+   To install in your home directory (~/bin and ~/etc) run:
+
+	./configure --prefix=$HOME
+
+   To install in the current directory (./bin and ./etc) run:
+
+	./configure --prefix=`pwd`
+
+   To specify different directories for bin and etc run:
+
+	./configure --bindir=/usr/local/bin --sysconfdir=/usr/local/etc
+
+   See ./configure -h for additional options.
+
+2. Compile the executables.
+
+	make
+
+3. Install the executables.
+
+	make install
+
+   Make sure that the configured bin directory is in your PATH environment
+   variable. You'll want to modify your .cshrc file, or equivalent, as there
+   are a variety of utility scripts that must be in your path for this package
+   to work properly. 
+
+   To check that your PATH is set correctly, open a new xterm and run the
+   command "udisk -v" to display the package version.
+
+4. Start a user-level block device on your target machine. There are four
+   options: ramdisk, diskfile, buffered disk, or raw disk. Below are some
+   examples. The default is a ramdisk (run udisk without any options): 
+
+   "udisk" to create a ramdisk
+   "udisk -d /dev/sdc" to create a LUN on sdc
+   "udisk -d /tmp/diskfile" to create a diskfile
+   "udisk -d /dev/sg2" to accesss a raw device (preferred mode)
+
+   The default LUN size is 128MB.  You can change the number of blocks with
+   the -n option.  For example, to create a 1GB ramdisk, you can run udisk
+   like this (default block size is 512 bytes): udisk -n 2097152.
+
+   When accesing a raw device (using the SCSI generic intervce /dev/sg*),
+   the disk size is automatically determined.  However, you can override the
+   number of blocks using the -n option.
+
+   See udisk -h for additional usage.
+
+5. Open another xterm and run a simple conformance and performance test.
+
+	utest -Vf
+
+   By default, the target configuration file (etc/ips.conf) contains a single
+   target with the IP address 127.0.0.1.  Use this IP address if you want to
+   run the initiator and target on the same machine, otherwise specify the IP
+   address of your target.  
+
+   See utest -h for usage.
+
+7. Generate more complex I/O to the first target (target 0) in the target
+   configuration file.  This workload has 25% writes (75% reads), a working set
+   size (capacity) of 100 MB, and 8 outstanding requests.  The writes are 50%
+   random and the reads are sequential. The write request size is 128 KB and
+   the read request size is 64 KB.  The workload "warms" for 5 seconds and
+   "tests" for 5 seconds.
+
+	fitness --tid 0 \
+	--wr 25 --cap 100 --qdep 8 --wrnd 50 --rrnd 0 --wrsz 128 --rdsz 64 \
+	--warm 5 --test 5
+
+   Note: In this example, all I/O is directed through user-level iSCSI (not
+   through the kernel's storage stack).  Once the kernel modules are installed,
+   you can specify a specific iSCSI device (e.g., --device /dev/sdc) or a file
+   in a file system mounted on an iSCSI device (e.g., --file /mnt/datafile). 
+
+   The fitness test can also be used without iSCSI.
+
+   See fitness -h for additional usage.
+
+================================================================================
+         Compiling and installing the iSCSI initiator (intel_iscsi.ko)         
+================================================================================
+
+1. See linux-2.6/README for installing the modules.
+
+2. Configure your targets (e.g., /etc/ips.conf). Instructions are in the file.
+   There are also instrutions on how to create a SCSI RAMDISK running on the
+   same machine as the initiator module.
+
+3. Start a user-level block device (ramdisk) on each target machine that
+   you specified in your configuration file.
+
+	udisk
+
+   See udisk -h for additional usage.
+
+4. Run utest from the initiator. If you do not connect to each target, then
+   there is likely a problem with the configuration.  Double-check ips.conf.
+
+	utest
+
+5. Start the driver with the following command:
+
+	/etc/init.d/ips start
+
+   You should see output similar to the following when running "dmesg":
+
+	Vendor: Intel     Model: Intel Labs iSCSI  Rev: 0
+	Type:   Direct-Access                      ANSI SCSI revision: 02
+
+	SCSI device sdc: 204800 512-byte hdwr sectors (105 MB)
+	sdc: unknown partition table
+	Attached scsi disk sdc at scsi5, channel 0, id 0, lun 0
+
+   You can now use the device as you would any other SCSI device. Statistics
+   can be viewed from /proc/scsi/iscsi/<host> (e.g., cat /proc/scsi/iscsi/2).
+
+6. Start the performance monitor in another xterm. This will graph the I/O
+   performance of the target. It gets its information from /proc/scsi/iscsi.
+
+	iscsi-monitor
+
+   See iscsi-monitor -h for usage. Note: you will need gnuplot installed.
+   If using yum, you can just "yum install gnuplot."
+
+7. Generate I/O to the first target (target 0) in the target configuration file.
+   This workload has 25% writes (75% reads), a working set size (capacity) of
+   100MB, and 8 outstanding requests.  The writes are 50% random and the reads
+   are sequential. The write request size is 128KB and the read request size
+   is 64KB.  The workload "warms" for 5 seconds and "tests" for 5 seconds.
+   The --direct option specifies O_DIRECT when doing I/O (no caching).
+
+        fitness --device /dev/<device> \
+        --wr 25 --cap 100 --qdep 8 --wrnd 50 --rrnd 0 --wrsz 128 --rdsz 64 \
+        --warm 5 --test 5 --direct
+
+8. You can stop the driver with the following command:
+
+	/etc/init.d/ips stop
+
+================================================================================
+                              Troubleshooting                                  
+================================================================================
+
+Check the kernel error messages /var/log/messages or run "dmesg" to see any
+errors reported from the host driver. The targets will report any errors to
+their terminal.
+
+By default, debugging is enabled and the targets will echo each SCSI command
+they receive.  Disable debugging by passing --disable-debug to ./configure.
+Alternatively, one can simply redirect the output ("./udisk > /dev/null").
+This debugging level can be modified in the file debug.h. 

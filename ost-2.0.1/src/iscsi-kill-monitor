@@ -1,0 +1,2 @@
+#!/bin/sh
+kill `ps x | grep fitness | grep counters_loop | grep -v grep | awk '{print $1}'`

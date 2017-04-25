@@ -1,0 +1,78 @@
+
+#
+# iSCSI target configuration file
+#
+
+#
+# The following options are supported:
+#
+# ip=<ip address>                    Target's IP address
+# port=<port>                        Target's port
+# fix=1                              Fix IP and port (ignore any redirection)
+# TargetName=<iqn>                   iSCSI qualified name
+# which=<string>                     Selects a target returned by SendTargets
+# InitiatorUser=<CHAP username>      Initiator's username
+# InitiatorPass=<CHAP password>      Initiator's password
+# TargetUser=<CHAP username>         Target's username
+# TargetPass=<CHAP password>         Target's password
+# InitialR2T=<yes|no>                iSCSI data transfer parameter
+# ImmediateData=<yes|no>             iSCSI data transfer parameter
+# MaxRecvDataSegmentLength=<integer> iSCSI data transfer parameter
+# FirstBurstLength=<integer>         iSCSI data transfer parameter
+# MaxBurstLength=<integer>           iSCSI data transfer parameter 
+# 
+# Only ip=<ip address> is required for each target. Everything else is optional.
+#
+# If TargetName is not specified, a discovery login is used (SendTargets). 
+# If which=<string> is specified, then the first TargetName returned by
+# SendTargets with the substring <string> is selected, else the first
+# TargetName returned is selected.  For example, if the following targets are
+# returned by SendTargets:
+#
+# iqn.2003-08.com.intel:disk_0
+# iqn.2003-08.com.intel:disk_1
+# iqn.2003-08.com.intel:disk_2
+#
+# one could specify the second target as follows:
+#
+# ip=172.19.129.254 which=disk_1
+#
+# If TargetUser and TargetPass are not specified, then AuthMethod is set to
+# None. If a TargetUser and TargetPass is specified but no InitiatorUser and
+# InitiatorPass, then the target is not authenticated, only the initiator. It
+# is not possible to only authenticate the target.
+#
+
+#
+# Example
+#
+# ip=127.0.0.1
+# ip=127.0.0.1 port=3261 which=disk_2
+# ip=127.0.0.1 port=3261 TargetName=iqn.2003-08.com.intel:disk_2
+# ip=127.0.0.1 InitialR2T=yes ImmediateData=no MaxBurstLength=262144
+# ip=127.0.0.1 TargetUser=foo TargetPass=bar
+#
+
+#
+# Set defaults for all targets here.  After the first ip=<ip address> is
+# specified, any additional options apply to that target only.
+#
+
+MaxRecvDataSegmentLength=65536
+FirstBurstLength=1048576
+MaxBurstLength=1048576
+TargetUser=foo
+TargetPass=bar
+#InitiatorUser=foo
+#InitiatorPass=bar
+
+#
+# Specify ip addresses here and any target-specific options. First specify
+# the ip address and then any options (all on the same line).
+#
+#ip=127.0.0.1
+
+#
+# We create a 16MB ramdisk by default (32768 512-byte sectors)
+#
+ramdisk=32768

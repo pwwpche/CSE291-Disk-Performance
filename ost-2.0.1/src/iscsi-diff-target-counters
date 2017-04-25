@@ -1,0 +1,54 @@
+#!/usr/bin/perl
+
+$| = 1; # Turns off output buffering
+
+$prefix = "t_";
+
+again: chop($_=<STDIN>);
+if (!length($_)) {exit;}
+s/$prefix//g;
+%val = split;
+
+printf("${prefix}secs %.2f ", $val{'SECS'});
+if (!$val{'SECS'}) {
+    printf(stderr "${prefix}SECS is 0 -- double check that target is up\n");
+    exit(1);
+}
+
+#
+# Performance (bandwidth, throughput, latency)
+#
+
+printf("${prefix}bw %.2f ", ($val{'TODEV'}+$val{'FROMDEV'})/1048576/$val{'SECS'});
+printf("${prefix}iops %.0f ", $val{'OPS'}/$val{'SECS'});
+printf("${prefix}lat %.2f ", $val{'OPS'}?($val{'LAT'}/$val{'OPS'}/1000.0):0);
+printf("${prefix}lat_wr %.2f ", $val{'OPS_WR'}?($val{'LAT_WR'}/$val{'OPS_WR'}/1000.0):0);
+printf("${prefix}lat_rd %.2f ", $val{'OPS_RD'}?($val{'LAT_RD'}/$val{'OPS_RD'}/1000.0):0);
+
+#
+# Workload characteristics
+#
+
+printf("${prefix}wr %.2f ", ($val{'OPS_WR'}||$val{'OPS_RD'})?$val{'OPS_WR'}/($val{'OPS_WR'}+$val{'OPS_RD'}):0);
+printf("${prefix}rd %.2f ", ($val{'OPS_WR'}||$val{'OPS_RD'})?$val{'OPS_RD'}/($val{'OPS_WR'}+$val{'OPS_RD'}):0);
+printf("${prefix}wrsz %.2f ", $val{'OPS_WR'}?$val{'TODEV'}/$val{'OPS_WR'}/1024:0);
+printf("${prefix}rdsz %.2f ", $val{'OPS_RD'}?$val{'FROMDEV'}/$val{'OPS_RD'}/1024:0);
+printf("${prefix}qdep %.2f ", $val{'OPS'}?$val{'DEPTHS'}/$val{'OPS'}:0);
+printf("${prefix}qdep_wr %.2f ", $val{'OPS_WR'}?$val{'DEPTHS_WR'}/$val{'OPS_WR'}:0);
+printf("${prefix}qdep_rd %.2f ", $val{'OPS_RD'}?$val{'DEPTHS_RD'}/$val{'OPS_RD'}:0);
+printf("${prefix}jmp %.0f ", $val{'OPS'}?$val{'JUMPS'}/$val{'OPS'}/2048:0);
+printf("${prefix}jmp_wr %.0f ", $val{'OPS_WR'}?$val{'JUMPS_WR'}/$val{'OPS_WR'}/2048:0);
+printf("${prefix}jmp_rd %.0f ", $val{'OPS_RD'}?$val{'JUMPS_RD'}/$val{'OPS_RD'}/2048:0);
+
+printf("\n");
+
+goto again;
+
+#  printf(" RXBW %.2f", $val{'T_RXBYTES'}/$val{'P_SECS'}/1048576);
+#  printf(" TXBW %.2f", $val{'T_TXBYTES'}/$val{'P_SECS'}/1048576);
+#  printf(" TBW %.2f", ($val{'T_RXBYTES'}+$val{'T_TXBYTES'})/$val{'P_SECS'}/1048576);
+#  printf(" CPU %.2f", $val{P_CPUUSED}/($val{P_CPUUSED}+$val{P_CPUTOTAL}));
+#  printf(" CTXT %.2f", $val{P_CTXT}/$val{P_SECS}/1000.0);
+#  printf(" INT %.2f", $val{'P_INT'}/$val{'P_SECS'}/1000.0);
+#  printf(" RXP %.2f", $val{'P_RXPACKETS'}/$val{'P_SECS'}/1000.0);
+#  printf(" TXP %.2f", $val{'P_TXPACKETS'}/$val{'P_SECS'}/1000.0);

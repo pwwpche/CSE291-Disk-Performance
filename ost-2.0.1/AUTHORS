@@ -1,0 +1,16 @@
+2010 - OST 2.0 release (Mesnier). SCSI RAMDISK supported added.
+2008 - David Koufaty (Intel) removed compiler warnings for Intel 64
+2008 - Checked in latest code from relative fitness research (MM)
+2007 - Support for workload characterization, and I/O tracing and replay (MM)
+2006 - Amber M. Palekar (CMU) ported so.c from 2.4 to 2.6.
+2006 - Released version 2 (ported the initiator device driver to Linux 2.6,
+       moved the build environment over to automake/autoconf; and added the ips
+       script, the fitness test workload generator, and the iscsi-monitor (MM)
+2004 - Sourceforge patch to fix garbled tracing output (jlinton)
+2004 - Sourceforge patch to specify socket address family at runtime (sfritz)
+2004 - Modified osdfs.c to use the Linux page cache (MM)
+2004 - Joel Clark, Zheng Diao, Sandeep Nair, Steven Zhang, and Shunyu Zhu (all
+       Intel) ported the code to iSCSI v20, added support for the ips config
+       file (ips.conf), added support for SMP, and implemented CHAP.
+2002 - Added support for OSD, including so.c and osdfs.c (MM)
+2001 - Mike Mesnier (Intel) implemented version 1 for Linux 2.4.

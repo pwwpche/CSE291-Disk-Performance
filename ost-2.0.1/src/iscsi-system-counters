@@ -1,0 +1,43 @@
+#!/usr/bin/perl
+
+system("cat /proc/stat");
+
+#
+# read in stats from /proc/net/dev
+#
+
+foreach $line (split /\n/, `cat /proc/net/dev`) {
+    if ($line =~ /eth(\d+):(\d+)\s*(\d+)\s*\d+\s+\d+\s+\d+\s+\d+\s+\d+\s+\d+\s+(\d+)\s+(\d+)/) {
+        #print "ETH_$1 RXB $2 RXP $3 TXB $4 TXP $5\n";
+        $RXB += $2;
+        $RXP += $3;
+        $TXB += $4;
+        $TXP += $5;
+    }
+}
+
+$RXB;
+$RXP;
+$TXB;
+$TXP;
+print "eth $RXB $RXP $TXB $TXP\n";
+
+#
+# IP stats from netstat -s
+#
+
+$text = `netstat -s`;
+$text =~ /(\d+) total packets received/; print "IP_RX $1\n";
+$text =~ /(\d+) requests sent out/; print "IP_TX $1\n";
+$text =~ /(\d+) segments received/; print "TCP_RX $1\n";
+$text =~ /(\d+) segments send out/; print "TCP_TX $1\n";
+
+#
+# read in extended stats from /proc/net/netstat
+#
+#
+#foreach $line (split /\n/, `cat /proc/net/netstat`) {
+#  if ($line =~ /TcpExt: \d+/) {
+#      print $line;
+#  }
+#}

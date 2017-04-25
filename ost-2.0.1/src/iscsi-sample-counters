@@ -1,0 +1,142 @@
+#!/usr/bin/perl
+
+goto just_the_time;
+
+#
+# Get the system counters
+#
+
+foreach $line (split /\n/, `iscsi-system-counters`) {
+  $line =~ s/(\S+\s+)//; $key = $1;
+  $key =~ s/\s*//g;
+  $new{$key} = $line; 
+}
+
+#
+# Note: CPU is user, nice, system, idle
+#
+
+foreach $key (sort keys %new) {
+  if (($key =~ /disk_io/)||($key =~ /cpu$/)||($key =~ /ctxt/)||($key=~/intr/)||($key=~/eth/)||($key=~/TCP/)||($key=~/IP/)) {
+
+    # disk counters
+
+    if ($key =~ /disk_io/) {
+      #print "key = $key\n";
+      @disks = split(/\s+/, $new{$key});
+      shift(@disks);
+      foreach $disk (@disks) {
+        #print "$disk\n";
+        $disk =~ /\(\d+,\d+\):\((\d+),(\d+),(\d+),(\d+),(\d+)\)/;
+        #print "accesses = $accesses + $1\n";
+        $accesses += $1;
+        $reads += $2;
+        $blocks_read += $3; $writes += $4;
+        $blocks_written += $5;
+      }
+    }
+
+    @elems = split /\s/, $new{$key};
+    $n = @elems;
+    for ($i=0; $i<$n; $i++) {
+      $val = $elems[$i];
+
+      # disk stats
+
+      # TCP/IP
+      if ($key =~ /IP_RX/) {$ip_rx = $val;}
+      if ($key =~ /IP_TX/) {$ip_tx = $val;}
+      if ($key =~ /TCP_RX/) {$tcp_rx = $val;}
+      if ($key =~ /TCP_TX/) {$tcp_tx = $val;}
+
+      # Interupts and elapsed time
+      if ($key =~ /intr/) {
+        if ($i==0) {
+          $intr = $val;
+        }
+        if ($i==1) {
+          $time = $val;
+        }
+      }
+ 
+      # CMUCPU total used 
+      # CMUCPUX total used top bottom
+      if ($key =~ /cmucpu/) {
+          if ($i==0) {
+            $cmucpu_total = $val;
+          } elsif ($i==1) {
+            $cmucpu_used = $val;
+          } else {
+            printf(stderr "unexpected field in cmucpu\n");
+            exit(1);
+          }
+      } else {
+          if ($key =~ /cpu/) {
+              if ($i==0) { #user
+                $cpu_total += $val;
+                $cpu_used += $val;
+              } elsif ($i==1) { #nice
+                $cpu_total += $val;
+                $cpu_used += $val;
+              } elsif ($i==2) { #system
+                $cpu_total += $val;
+                $cpu_used += $val;
+              } elsif ($i==3) { #idle
+                $cpu_total += $val;
+              } else {
+                #printf(stderr "ignoring field $i in cpu\n");
+              }
+          }
+      }
+
+      # Context switches 
+      if ($key =~ /ctxt/) {
+        if ($i==0) {
+          $ctxt = $val;
+        }
+      }
+
+      # Ethernet
+      if ($key =~ /eth/) {
+	if ($val<0) {
+          $val *= -1;
+        }
+        if ($i==0) {
+          $rxb = $val;
+        } elsif ($i==1) {
+          $rxp = $val;
+        } elsif ($i==2) {
+          $txb = $val;
+        } elsif ($i==3) {
+          $txp = $val;
+        }
+      }
+    }
+    if ($verbose) {
+        print "\n";
+    }
+  }
+}
+
+chop($version = `uname -r`);
+if ($version =~ /2.6/) {
+  $secs = $time/1000.0;
+} else {
+  $secs = $time/100.0;
+}
+
+if ($cmucpu_total) {
+  $total = $cmucpu_total;
+  $used = $cmucpu_used;
+} else {
+  $total = $cpu_total;
+  $used = $cpu_used;
+}
+
+printf("P_SECS %.2f P_CPUUSED %.0f P_CPUTOTAL %.0f P_CTXT %.0f P_INT %.0f P_RX %.0f P_RXPACKETS %.0f P_TX %.0f P_TXPACKETS %.0f DISK_OPS %i DISK_READS %i DISK_WRITES %i RD_BLKS %i WR_BLKS %i ", $secs, $used, $total, $ctxt, $intr, $rxb, $ip_rx, $txb, $ip_tx, $accesses, $reads, $writes, $blocks_read, $blocks_written);
+exit(0);
+
+just_the_time:
+chop($TIME=`date +%s.%N`);
+printf("t_SECS %s ", $TIME);
+exit(0);

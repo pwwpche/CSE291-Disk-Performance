@@ -1,0 +1,21 @@
+#!/bin/sh
+
+if ps x | grep udisk | grep -v grep | grep -v iscsi-kill-udisk > /dev/null ; then
+killall -s SIGINT udisk
+if ps x | grep udisk | grep -v grep | grep -v iscsi-kill-udisk > /dev/null ; then
+killall -s SIGTERM udisk
+if ps x | grep udisk | grep -v grep | grep -v iscsi-kill-udisk > /dev/null ; then
+echo failed to shutdown udisk on `hostname` as `whoami`
+exit 1
+else
+echo udisk forcefully shutdown on `hostname` as `whoami`
+exit 0
+fi
+else
+echo udisk gracefully shutdown on `hostname` as `whoami`
+exit 0
+fi
+else
+echo no udisk is running on `hostname` as `whoami`
+exit 0
+fi

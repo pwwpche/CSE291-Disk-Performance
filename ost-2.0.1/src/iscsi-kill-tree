@@ -1,0 +1,15 @@
+#!/usr/bin/perl
+
+killtree($ARGV[0]);
+system("kill 9 $ARGV[0]");
+sub killtree {
+    my $pid =  $_[0];
+    chop(@list = `ps axl | awk '{if (\$4 == $pid) print \$3}'`);
+    foreach $process (@list) {
+        printf("killtree $process\n");
+        killtree($process);
+    }
+    if (length($process)) {
+        system("kill 9 $process");
+    }
+}

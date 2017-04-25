@@ -1,0 +1,79 @@
+#!/usr/bin/perl
+
+$default_tid = 0;
+$default_secs = 1; 
+$default_metric = "bw";
+$default_prefix = "i";
+$default_window = 60;
+$default_plot = 1;
+$default_config = "/etc/ips.conf";
+
+sub usage () {
+    printf(stderr "Usage: iscsi-monitor [options]\n");
+    printf(stderr "Options:\n");
+    printf(stderr "  -t <tid>           Target id (dflt $default_tid)\n");
+    printf(stderr "  -s <secs>          Time between samples (dflt $default_secs)\n");
+    printf(stderr "  -m <bw|iops|lat>   Metric to plot (dflt $default_metric)\n");
+    printf(stderr "  -p <i|t>           Initiator vs. target (dflt $default_prefix)\n");
+    printf(stderr "  -w <secs>          Window to plot (dflt $default_window)\n");
+    printf(stderr "  -f <file>          File to save counters in (no dflt)\n");
+    printf(stderr "  -c <target config> Target config file (dflt $default_config)\n");
+    printf(stderr "  -x                 Do not plot (use with iscsi-gnupipe, dflt $default_plot)\n");
+}
+
+use Getopt::Std;
+%options=();
+getopts("t:s:m:hw:xXf:p:c:", \%options);
+foreach(@ARGV) {
+    printf(stderr "unknown option $_\n");
+    usage();
+    exit(1);
+}
+
+if (defined $options{h}) {
+    usage(); exit(0);
+}
+
+$tid = $default_tid; $tid = $options{t} if defined $options{t};
+$secs = $default_secs; $secs = $options{s} if defined $options{s}; 
+$metric = $default_metric; $metric = $options{m} if defined $options{m};
+$prefix = $default_prefix; $prefix = $options{p} if defined $options{p};
+$window = $default_window; $window = $options{w} if defined $options{w};
+$plot = $default_plot; $plot = 0 if defined $options{x};
+$config = $default_config; $config = $options{c} if defined $options{c};
+
+if ($prefix eq "i") {
+  $which = "initiator";
+} elsif ($prefix == "t") {
+  $which = "target";
+} else {
+  fprintf(stderr, "uknown prefix \"%s\"\n", $prefix);
+  exit(1);
+}
+
+$clean = 1;
+chop($hostname=`hostname`);
+#$file = "/tmp/".$hostname.".counters"; $file = $options{f} if defined $options{f};
+
+if (!@ARGV) {
+    usage();
+    printf("using defaults: tid=$tid, secs=$secs, metric=${prefix}_${metric}, window=$window plot=$plot\n");
+}
+if ($clean) {
+    $cmd = "rm -f /tmp/*.iscsi_plt /tmp/*.iscsi_raw";
+    print("cleaning out /tmp...\n");
+    system($cmd);
+}
+if (!$plot) {
+    print("-x specified, so not plotting data (run iscsi-gnupipe)\n");
+}
+print("Control-C to exit\n\n");
+
+if (length($file)) {
+    $save_counters =  "--${prefix}_counters_save $file";
+} else {
+    $save_counters =  ""; 
+}
+
+$cmd = "fitness --config $config --tid $tid --${prefix}_counters_loop $secs $save_counters | iscsi-diff-counters | iscsi-diff-${which}-counters | iscsi-gnupipe $tid ${prefix}_${metric} $secs $window $plot $config\n";
+print("$cmd"); system($cmd);

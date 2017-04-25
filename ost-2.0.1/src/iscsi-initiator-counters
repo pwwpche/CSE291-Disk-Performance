@@ -1,0 +1,48 @@
+#!/usr/bin/perl
+
+#
+# This scripts reads the initiator counters from /proc/scsi/iscsi/<host> 
+#
+
+if (@ARGV != 2) {
+    printf(STDERR "usage: <tid> <lun>\n");
+    exit(1);
+}
+$I=$ARGV[0]; $J=$ARGV[1];
+chop($TIME=`date +%s.%N`);
+again: chop($PROC_FILE=`ls /proc/scsi/iscsi/*`);
+if (!length($PROC_FILE)) {
+    printf(stderr "error reading /proc/scsi/iscsi/? -- check driver\n");
+    system("touch /tmp/$I.driver_error");
+    $error = 1;
+    sleep(1);
+} else {
+    $TEXT = `cat $PROC_FILE`;
+
+    $TEXT =~ /ops\[$I\]\[$J\]:\s+(\d+)/; $OPS=$1; 
+    $TEXT =~ /ops_wr\[$I\]\[$J\]:\s+(\d+)/; $OPS_WR=$1; 
+    $TEXT =~ /ops_rd\[$I\]\[$J\]:\s+(\d+)/; $OPS_RD=$1; 
+    $TEXT =~ /ops_bidi\[$I\]\[$J\]:\s+(\d+)/; $OPS_BIDI=$1; 
+    $TEXT =~ /ops_other\[$I\]\[$J\]:\s+(\d+)/; $OPS_OTHER=$1; 
+
+    $TEXT =~ /op_latencies\[$I\]\[$J\]:\s+(\d+)/; $LAT=$1; 
+    $TEXT =~ /op_latencies_wr\[$I\]\[$J\]:\s+(\d+)/; $LAT_WR=$1; 
+    $TEXT =~ /op_latencies_rd\[$I\]\[$J\]:\s+(\d+)/; $LAT_RD=$1; 
+    $TEXT =~ /op_latencies_bidi\[$I\]\[$J\]:\s+(\d+)/; $LAT_BIDI=$1; 
+    $TEXT =~ /op_latencies_other\[$I\]\[$J\]:\s+(\d+)/; $LAT_OTHER=$1; 
+
+    $TEXT =~ /op_depths\[$I\]\[$J\]:\s+(\d+)/; $DEPTHS=$1; 
+    $TEXT =~ /op_depths_wr\[$I\]\[$J\]:\s+(\d+)/; $DEPTHS_WR=$1; 
+    $TEXT =~ /op_depths_rd\[$I\]\[$J\]:\s+(\d+)/; $DEPTHS_RD=$1; 
+    $TEXT =~ /op_depths_bidi\[$I\]\[$J\]:\s+(\d+)/; $DEPTHS_BIDI=$1; 
+    $TEXT =~ /op_depths_other\[$I\]\[$J\]:\s+(\d+)/; $DEPTHS_OTHER=$1; 
+
+    $TEXT =~ /bytes_sent\[$I\]\[$J\]:\s+(\d+)/; $TODEV=$1; 
+    $TEXT =~ /bytes_received\[$I\]\[$J\]:\s+(\d+)/; $FROMDEV=$1; 
+
+    $TEXT =~ /op_jumps\[$I\]\[$J\]:\s+(\d+)/; $JUMPS=$1; 
+    $TEXT =~ /op_jumps_wr\[$I\]\[$J\]:\s+(\d+)/; $JUMPS_WR=$1; 
+    $TEXT =~ /op_jumps_rd\[$I\]\[$J\]:\s+(\d+)/; $JUMPS_RD=$1; 
+} 
+
+print("i_SECS $TIME i_OPS $OPS i_OPS_WR $OPS_WR i_OPS_RD $OPS_RD i_OPS_BIDI $OPS_BIDI i_OPS_OTHER $OPS_OTHER i_DEPTHS $DEPTHS i_DEPTHS_WR $DEPTHS_WR i_DEPTHS_RD $DEPTHS_RD i_DEPTHS_BIDI $DEPTHS_BIDI i_DEPTHS_OTHER $DEPTHS_OTHER i_LAT $LAT i_LAT_WR $LAT_WR i_LAT_RD $LAT_RD i_LAT_BIDI $LAT_BIDI i_LAT_OTHER $LAT_OTHER i_TODEV $TODEV i_FROMDEV $FROMDEV i_JUMPS $JUMPS i_JUMPS_WR $JUMPS_WR i_JUMPS_RD $JUMPS_RD\n");

@@ -1,0 +1,121 @@
+OST 2.0:
+  -changed project name from intel-iscsi to ost
+  -added SCSI RAMDISK to iSCSI initiator
+  -removed kernel drivers for object-based storage (so.c and osdfs.c)
+
+2.1.4:
+  -added data integrity check to fitness.c
+
+2.1.0:
+  -added experimental cache to disk.c (DK)
+  -numerous fixes from relative fitness research (especially fitness.c)
+   and restructuring of build environment (MM)
+  -sourceforge patch to specify socket address family at runtime (sfritz)
+  -sourceforge patch to fix garbled tracing output (jlinton) -- DEFUNCT
+  -added option to fitness.c for strided reads and writes
+
+2.0.17:
+  -removed cov and stddev warming mode from fitness.c
+  -changed usage flag to -h and/or --help
+  -modified fitness.c to retrieve block size from udisk
+  -added --t_counters back into to iscsi-monitor and fitness
+  -set unchecked_isa_dma to 0 in driver.c
+  -updated README and INSTALL files
+  -set INODE_LEN to 1024 in osd.h
+
+2.0.16:
+  -added I/O tracing and replay support 
+   (see --replay option to fitness and -t option to udisk)
+  -using pipes instead of /tmp for initiator counters
+  -fixed bug in so.c that was assigning all objects reads/writes
+   to the default object
+  -now including osd.d in distribution
+
+2.0.15b:
+  -cleaned up fitness usage
+
+2.0.15a:
+  -fixed #ifdef CONFIG_MPI in fitness.c
+
+2.0.15:
+  -added READ_CAPACITY command to osd for block mode
+  -updated 2.4 kernel patch for osd
+  -added osdfs to ips script
+  -fixed bug #1492881 (block sizes > 2048)
+
+2.0.14:
+  -modified iscsi.c so that isid is not zero
+  -reversed order of SessionType and AuthMethod when
+   sending login text parameters.
+  -disabled NOPs in utest.c unless -f is specified
+  -reversed order of driver_shutdown and releasing of host
+   in driver.c (so SYNCHRONIZE_CACHE can be sent to the
+   target by the kernel on device shutdown)
+  -fixed usermode ISCSI_MSLEEP and ISCSI_USLEEP
+
+2.0.13:
+  -fixed memory leak in fitness.c
+  -reporting targets in order in initiator.c
+  -added options to iscsi-monitor for graphing multiple tids
+  -fixed timing for --term in fitness.c
+  -remove sudo from reset in fitness.c (added iscsi_reset_counters)
+  -cleaned up iscsi-monitor (not auto raising)
+  -added fix=1 option to ips.conf
+  -modified ips to check for running driver
+  -running depmod -a as part of make install
+
+2.0.12:
+  -turned on watchdogs in initiator
+  -fixed udisk segfault on shutdown
+  -added session lock for params_out
+
+2.0.11:
+  -using modprobe instead of insmod
+  -fixed kernel lock-up in daemonize code
+  --added --direct to fitness for O_DIRECT
+
+2.0.9:
+  -added macros for queuing operations
+  -made another pass over error handling routines
+  -removed enqueue_worker_proc thread
+  -cleaned up the watchdogs
+  -added verbose=1 option to ips script
+
+2.0.8:
+  -modified initiator to respond to NOP_INs from a target
+  -made InitiatorName unique by adding some random bytes
+  -added -w <secs> option to iscsi-monitor (window to graph over)
+  -cleaned up CmdSN and StatSN in initiator and target code
+  -changed "all" to "All" for SendTargets (Mt. Jefferson)
+
+2.0.7:
+  -added support for variable length CHAP_C (was hardcoded at 16)
+  -added versioning info to executables (-V flag) and modules
+  -fixed setting of Final bit in initiator.c (when no data PDUs
+   follow a command, the Final bit must be set)
+
+2.0.6:
+  -pulled monitor scripts out of research/bin
+
+2.0.5:
+  -added configuration option --enable-xen
+
+2.0.4:
+  -fixes for gcc 4.0
+
+2.0.3:
+  -added MPI support to fitness.c
+
+2.0.2:
+  -added the following scripts from research/bin: sample_stats,
+   t_counters_diff, i_counters_diff, grab_stats, grab_header,
+   grab_data, initiator_counters
+
+2.0.1:
+  -modified fitness.c to require --tid and check that the queue
+   depth isn't larger than CONFIG_INITIATOR_QUEUE_DEPTH (else
+   t_counters overflows the alarm queue in initiator_command)
+
+2.0.0: 
+  -ported iscsi kernel modules and so.c to 2.6
+  -switched build environment over to automake
