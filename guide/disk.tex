@@ -1,0 +1,31 @@
+ \documentclass[12pt]{article}
+ %File creation date: 04/26/17  at 22:43
+ \usepackage{pstricks,pst-node,pst-tree}
+ \usepackage{geometry}
+ \usepackage{lscape}
+ \pagestyle{empty}
+ \begin{document}
+ %\begin{landscape}
+ \begin{center}
+\psset{linecolor=black,tnsep=1pt,tndepth=0cm,tnheight=0cm,treesep=.8cm,levelsep=50pt,radius=10pt}
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wr}}\\$\leq$20.00}}}{
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{3}\\15.77}}
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wr}}\\$\leq_*$90.00}}}{
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{rrnd}}\\$\leq$30.00}}}{
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{4}\\ 0.42}}
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{4}\\1.08}}
+   }
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{3}\\1.14}}
+ }
+ }
+ \end{center}
+ GUIDE v.25.2
+ unpruned least-squares multiple linear regression tree
+for predicting \texttt{\detokenize{bw}}.
+At each split, an observation goes to the left branch 
+ if and only if the condition is satisfied.
+ The symbol `$\leq_*$' stands for `$\leq$ or missing'.
+Sample size (\emph{in italics}) and mean of \texttt{\detokenize{bw}} printed below nodes.
+Second best split variable at root node is \texttt{\detokenize{wrnd}}.
+ %\end{landscape}
+ \end{document}
