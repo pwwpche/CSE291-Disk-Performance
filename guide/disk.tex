@@ -1,21 +1,150 @@
- \documentclass[12pt]{article}
- %File creation date: 04/26/17  at 22:43
+ \documentclass{article}
+ %File creation date: 04/28/17  at 22:57
  \usepackage{pstricks,pst-node,pst-tree}
- \usepackage{geometry}
+ \usepackage[left=0.25in,right=0.25in,top=0.75in,bottom=0.75in]{geometry}
  \usepackage{lscape}
  \pagestyle{empty}
  \begin{document}
- %\begin{landscape}
- \begin{center}
-\psset{linecolor=black,tnsep=1pt,tndepth=0cm,tnheight=0cm,treesep=.8cm,levelsep=50pt,radius=10pt}
-  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wr}}\\$\leq$20.00}}}{
-    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{3}\\15.77}}
-  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wr}}\\$\leq_*$90.00}}}{
-  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{rrnd}}\\$\leq$30.00}}}{
-    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{4}\\ 0.42}}
-    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{4}\\1.08}}
+ \begin{landscape}
+ \begin{center} \tiny
+\psset{linecolor=black,tnsep=1pt,tndepth=0cm,tnheight=0cm,treesep=.1cm,levelsep=30pt,radius=3pt}
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{qdep}}\\$\leq$3.00}}}{
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wr}}\\$\leq$30.00}}}{
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{rdsz}}\\$\leq_*$232.00}}}{
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{qdep}}\\$\leq$1.50}}}{
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wr}}\\$\leq$10.00}}}{
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{2}\\240.3}}
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{3}\\128.6}}
    }
-    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{3}\\1.14}}
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wrnd}}\\$\leq_*$90.00}}}{
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wrsz}}\\$\leq_*$207.00}}}{
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{4}\\236.8}}
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{2}\\284.1}}
+   }
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{3}\\189.4}}
+   }
+   }
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{2}\\281.7}}
+   }
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wrsz}}\\$\leq$113.50}}}{
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wr}}\\$\leq_*$70.00}}}{
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{rdsz}}\\$\leq$96.00}}}{
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{3}\\136.8}}
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{4}\\199.2}}
+   }
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{4}\\148.9}}
+   }
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wrnd}}\\$\leq_*$90.00}}}{
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{rrnd}}\\$\leq_*$70.00}}}{
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{rdsz}}\\$\leq$178.00}}}{
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{3}\\143.8}}
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{3}\\165.1}}
+   }
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{3}\\147.0}}
+   }
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{2}\\164.4}}
+   }
+   }
+   }
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wr}}\\$\leq$30.00}}}{
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wr}}\\$\leq$10.00}}}{
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{rdsz}}\\$\leq$7.00}}}{
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{2}\\139.1}}
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{qdep}}\\$\leq_*$48.00}}}{
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{qdep}}\\$\leq_*$24.00}}}{
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{rrnd}}\\$\leq$30.00}}}{
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{2}\\473.2}}
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wrsz}}\\$\leq$48.00}}}{
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{2}\\289.2}}
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{4}\\361.0}}
+   }
+   }
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wrnd}}\\$\leq$10.00}}}{
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{2}\\484.1}}
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{3}\\507.5}}
+   }
+   }
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{3}\\473.1}}
+   }
+   }
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{qdep}}\\$\leq_*$48.00}}}{
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{rdsz}}\\$\leq$42.00}}}{
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{3}\\192.4}}
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{rdsz}}\\$\leq$124.50}}}{
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wrnd}}\\$\leq$20.00}}}{
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{2}\\375.0}}
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{4}\\251.3}}
+   }
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{qdep}}\\$\leq$10.00}}}{
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{2}\\337.4}}
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{4}\\381.1}}
+   }
+   }
+   }
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{2}\\314.3}}
+   }
+   }
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wr}}\\$\leq$70.00}}}{
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wrsz}}\\$\leq$73.50}}}{
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{rrnd}}\\$\leq$50.00}}}{
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{rdsz}}\\$\leq$136.50}}}{
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{2}\\234.9}}
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{3}\\282.3}}
+   }
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{rrnd}}\\$\leq$70.00}}}{
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{3}\\362.3}}
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{3}\\294.2}}
+   }
+   }
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wrnd}}\\$\leq$10.00}}}{
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{2}\\199.5}}
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wrnd}}\\$\leq$30.00}}}{
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{2}\\223.4}}
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wrsz}}\\$\leq_*$216.50}}}{
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wrnd}}\\$\leq$70.00}}}{
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wr}}\\$\leq$50.00}}}{
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{3}\\304.5}}
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{3}\\213.6}}
+   }
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wrsz}}\\$\leq$144.50}}}{
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{3}\\293.1}}
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{4}\\204.6}}
+   }
+   }
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{2}\\203.6}}
+   }
+   }
+   }
+   }
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wrnd}}\\$\leq$50.00}}}{
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{qdep}}\\$\leq$6.00}}}{
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{4}\\157.3}}
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wrnd}}\\$\leq$10.00}}}{
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{4}\\174.6}}
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wr}}\\$\leq$90.00}}}{
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{3}\\201.6}}
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{3}\\162.8}}
+   }
+   }
+   }
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{rrnd}}\\$\leq_*$90.00}}}{
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{rdsz}}\\$\leq$27.50}}}{
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{4}\\157.7}}
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{qdep}}\\$\leq_*$40.00}}}{
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wr}}\\$\leq$90.00}}}{
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{3}\\183.7}}
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{3}\\134.8}}
+   }
+  \pstree[treemode=D]{\TC~[tnpos=l]{\shortstack[r]{\texttt{\detokenize{wr}}\\$\leq$90.00}}}{
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{2}\\178.4}}
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{3}\\160.0}}
+   }
+   }
+   }
+    \TC[fillcolor=yellow,fillstyle=solid]~{\shortstack[c]{\emph{3}\\160.2}}
+ }
+ }
+ }
  }
  }
  \end{center}
@@ -26,6 +155,6 @@ At each split, an observation goes to the left branch
  if and only if the condition is satisfied.
  The symbol `$\leq_*$' stands for `$\leq$ or missing'.
 Sample size (\emph{in italics}) and mean of \texttt{\detokenize{bw}} printed below nodes.
-Second best split variable at root node is \texttt{\detokenize{wrnd}}.
- %\end{landscape}
+Second best split variable at root node is \texttt{\detokenize{wr}}.
+ \end{landscape}
  \end{document}
