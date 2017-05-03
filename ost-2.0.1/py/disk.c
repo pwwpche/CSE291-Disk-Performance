@@ -41,25 +41,30 @@ int main(void)
         return 1;
     }
 
-    FILE* spc_file = fopen("sample.spc", "r");
+    FILE* spc_file = fopen("WebSearch2.spc", "r");
     char tmp_str[100];
     char mode;
+
     int sector, read_size, disk_no;
     long long total_read_time = 0, total_seek_time = 0, total_write_time = 0;
     double total_read_size = 0, total_write_size = 0;
-
+    int task_count = 0;
     while(fscanf(spc_file, "%d,%d,%d,%c,%s", &disk_no, &sector, &read_size, &mode, &tmp_str) != EOF){
-	if(disk_no != 0){
+	if(disk_no != 0 || task_count > 10000){
 	    continue;
 	}
-	printf("%d, %d, %d, %c\n", disk_no, sector, read_size, mode);
+	if(task_count % 100 == 0){
+	    printf("task %d: %d, %d, %d, %c\n", task_count, disk_no, sector, read_size, mode);
+	}
+
+	task_count++;
 	off_t offset = (off_t)(sector);
 	timer_start();
 	flag = lseek(fd, (sector / 16) * 512, SEEK_SET);
 	timer_stop();
 	total_seek_time += get_interval();
 	
-	printf("offset: %ld\n", offset);
+	//printf("offset: %ld\n", offset);
 	if(flag != -1){
             void *buff = malloc(read_size);
 	    posix_memalign(&buff, BLOCKSIZE, read_size);
@@ -94,9 +99,12 @@ int main(void)
 	    printf("fseek() failed, sector: %d, read_size: %d, mode: %c, offset: %ld \n", sector, read_size, mode, offset);
 	}
     }
-    printf("seek: %d, read: %d, write: %d\n", total_seek_time, total_read_time, total_write_time);
+    printf("seek: %fms, read: %fms, write: %fms\n", total_seek_time / 1000.0, total_read_time / 1000.0, total_write_time / 1000.0);
     printf("total read speed: %fMB/s\n", total_read_size / 1000.0 / 1000.0 / ((total_read_time + 1) / 1000.0 / 1000.0));
     printf("total write speed: %fMB/s\n", total_write_size / 1000.0 / 1000.0 / ((total_write_time + 1) / 1000.0 / 1000.0));
+    printf("average latency: %fms\n", ((total_write_time + total_read_time + total_seek_time + 1) / 1000.0 / task_count));
+    printf("iops: %f\n", task_count * 1.0 / (total_write_time + total_read_time + total_seek_time + 1) * 1000 * 1000);
+
     fclose(spc_file);
     close(fd);
     return 0;
