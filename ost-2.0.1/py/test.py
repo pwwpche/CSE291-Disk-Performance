@@ -52,7 +52,7 @@ for i in range(samples):
 		echo %s | sudo -S ../src/fitness --device /dev/%s --seed %s \
 		--wr %s --qdep %s --rdsz %s --wrsz %s --rrnd %s --wrnd %s \
 		--rd_stride %s --wr_stride %s \
-		--warm 0 --test 60 --direct  
+		--warm 0 --test 10 --direct  
 	""" % ("123456", device_name, str(randint(0, 1000000000)), \
 		str(wr), str(qdep), str(rdsz), str(wrsz), str(rrnd), str(wrnd), \
 		str(rd_stride), str(wr_stride) \
@@ -64,7 +64,8 @@ for i in range(samples):
 	titles, numbers = result.split("\n")[0].split(), result.split("\n")[1].split()
 	data = dict(zip(titles, numbers))
 	data['wght'] = 0 if randint(0, 1000) < 100 else 1
-
+	data['rdstrd'] = rd_stride
+	data['wrstrd'] = wr_stride
 	if first:									# Write titles
 		first = False
 		for k in data:

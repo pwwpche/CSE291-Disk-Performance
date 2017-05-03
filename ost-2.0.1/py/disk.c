@@ -29,8 +29,9 @@ long long get_interval(){
 }
 int main(void)	
 {
-    clock_t start,finish;
-    double tcost=0.0;
+    struct timeval start,finish;
+    double seekcost=0.0;
+    double readcost=0.0;
     int total=0;
     int flag;
     errno = 0;  
