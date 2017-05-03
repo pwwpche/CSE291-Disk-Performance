@@ -46,6 +46,7 @@ int main(void)
     char mode;
     int sector, read_size, disk_no;
     long long total_read_time = 0, total_seek_time = 0, total_write_time = 0;
+    double total_read_size = 0, total_write_size = 0;
 
     while(fscanf(spc_file, "%d,%d,%d,%c,%s", &disk_no, &sector, &read_size, &mode, &tmp_str) != EOF){
 	if(disk_no != 0){
@@ -72,6 +73,7 @@ int main(void)
 		    printf("\n write() failed %d \n", size_write);
 		}else{
 		    total_write_time += get_interval();
+		    total_write_size += size_write;
 		}
 	    }else if(mode == 'R'){
 		timer_start();
@@ -84,6 +86,7 @@ int main(void)
 		    }
 		}else{
 		    total_read_time += get_interval();
+		    total_read_size += size_read;
 		}
 	    }
 	    free(buff);
@@ -92,6 +95,8 @@ int main(void)
 	}
     }
     printf("seek: %d, read: %d, write: %d\n", total_seek_time, total_read_time, total_write_time);
+    printf("total read speed: %fMB/s\n", total_read_size / 1000.0 / 1000.0 / ((total_read_time + 1) / 1000.0 / 1000.0));
+    printf("total write speed: %fMB/s\n", total_write_size / 1000.0 / 1000.0 / ((total_write_time + 1) / 1000.0 / 1000.0));
     fclose(spc_file);
     close(fd);
     return 0;
