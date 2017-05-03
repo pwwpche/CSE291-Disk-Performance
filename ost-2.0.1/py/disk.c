@@ -1,72 +1,116 @@
-
+#define _GNU_SOURCE
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
 #include<errno.h> 
 #include<time.h>
-int main(void)
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#define BLOCKSIZE 512
+
+struct  timeval start;
+struct  timeval end;
+
+
+void timer_start(){
+	gettimeofday(&start,NULL);
+}
+
+void timer_stop(){
+	gettimeofday(&end,NULL);
+}
+
+long long get_interval(){
+	long long diff = 1000000 * (end.tv_sec-start.tv_sec)+ end.tv_usec-start.tv_usec;
+	return diff;
+	
+}
+int main(void)	
 {
     clock_t start,finish;
     double tcost=0.0;
     int total=0;
     int flag;
-    FILE* fd = NULL;
     errno = 0;  
-    fd = fopen("/dev/sdb","w+");
-    if(NULL == fd){
-	printf("fopen err %d \n", errno);
+    int fd = open("/dev/sdb", O_RDWR|O_DIRECT, S_IRWXU);
+    if(-1 == fd){
+	printf("open err %d \n", errno);
         return 1;
     }
-	start=clock();
-	finish=clock();
+
     FILE* spc_file = fopen("sample.spc", "r");
     char tmp_str[100];
     char mode;
     int sector, read_size, disk_no;
+    long long total_read_time = 0, total_seek_time = 0, total_write_time = 0;
+
     while(fscanf(spc_file, "%d,%d,%d,%c,%s", &disk_no, &sector, &read_size, &mode, &tmp_str) != EOF){
-        
-	
 	if(disk_no != 0){
 	    continue;
 	}
 	printf("%d, %d, %d, %c\n", disk_no, sector, read_size, mode);
-	off_t offset = (off_t)(sector) * 512;
-	start=clock();
-	flag=fseeko(fd, offset, SEEK_SET);
-	finish=clock();
-	if(flag == 0){
-            char* buff = malloc(read_size);
+	off_t offset = (off_t)(sector);
+	timer_start();
+	flag = lseek(fd, (sector / 16) * 512, SEEK_SET);
+	timer_stop();
+	total_seek_time += get_interval();
+	
+	printf("offset: %ld\n", offset);
+	if(flag != -1){
+            void *buff = malloc(read_size);
+	    posix_memalign(&buff, BLOCKSIZE, read_size);
+	    memset(buff, 0, sizeof(buff));
+
 	    if(mode == 'W'){
-		memset(buff, 0, read_size);
-		start=clock();
-		int size_write = fwrite(buff, 1, read_size, fd);
-		finish=clock();
-		//tcost=(double)(finish-start)/CLOCKS_PER_SEC;
-		printf("time cost of write %f\n",tcost);
+		timer_start();
+		int size_write = write(fd, buff, sizeof(char) * read_size);
+		timer_stop();
 		if(size_write != read_size){
-		    printf("\n fwrite() failed %d \n", size_write);
+		    printf("\n write() failed %d \n", size_write);
+		}else{
+		    total_write_time += get_interval();
 		}
 	    }else if(mode == 'R'){
-		tcost+=(double)(finish-start);
-		start=clock();
-		int size_read = fread (buff, 1, read_size, fd);
-		finish=clock();
-		tcost+=(double)(finish-start);
-		total+=read_size;
-		//printf("time cost of read %f\n",tcost);
+		timer_start();
+		int size_read = read(fd, buff, sizeof(char) * read_size);
+		timer_stop();
 		if(size_read != read_size){
-		    printf("\n fwrite() failed %d \n", size_read);
+		    printf("\n read() failed %d \n", size_read);
+		    if(errno){
+			printf("read err %d \n", errno);
+		    }
+		}else{
+		    total_read_time += get_interval();
 		}
 	    }
-	    
+	    free(buff);
 	}else{
 	    printf("fseek() failed, sector: %d, read_size: %d, mode: %c, offset: %ld \n", sector, read_size, mode, offset);
 	}
     }
-
+    printf("seek: %d, read: %d, write: %d\n", total_seek_time, total_read_time, total_write_time);
     fclose(spc_file);
-    fclose(fd);
-    printf("version 2 thoughput is %f MBPS \n", (double)total*CLOCKS_PER_SEC/(1024.0*1024.0*tcost));
-
+    close(fd);
     return 0;
 }
+
+/*
+
+
+
+int main()
+{
+	void *buffer = malloc(BLOCKSIZE);
+	posix_memalign(&buffer, BLOCKSIZE, BLOCKSIZE);
+	memset(buffer, 0, sizeof(buffer));
+	int f = open("/dev/sdb", O_CREAT|O_TRUNC|O_WRONLY|O_DIRECT, S_IRWXU);
+	lseek(f, 512*1024*512, SEEK_SET);
+	write(f, buffer, BLOCKSIZE);
+	close(f);
+	free(buffer);
+	return 0;
+}
+
+*/
