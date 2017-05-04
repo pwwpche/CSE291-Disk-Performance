@@ -2,7 +2,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-#include<errno.h> 
+#include<errno.h>
 #include<time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -25,19 +25,22 @@ void timer_stop(){
 long long get_interval(){
 	long long diff = 1000000 * (end.tv_sec-start.tv_sec)+ end.tv_usec-start.tv_usec;
 	return diff;
-	
+
 }
-int main(void)	
+int main(void)
 {
     struct timeval start,finish;
     double seekcost=0.0;
     double readcost=0.0;
     int total=0;
     int flag;
-    errno = 0;  
-    int fd = open("/dev/sdb", O_RDWR|O_DIRECT, S_IRWXU);
+    errno = 0;
+		char device[100];
+		printf("device number: ");
+		scanf("%s", device);
+    int fd = open(device, O_RDWR|O_DIRECT, S_IRWXU);
     if(-1 == fd){
-	printf("open err %d \n", errno);
+	  printf("open err %d \n", errno);
         return 1;
     }
 
@@ -63,7 +66,7 @@ int main(void)
 	flag = lseek(fd, (sector / 16) * 512, SEEK_SET);
 	timer_stop();
 	total_seek_time += get_interval();
-	
+
 	//printf("offset: %ld\n", offset);
 	if(flag != -1){
             void *buff = malloc(read_size);
