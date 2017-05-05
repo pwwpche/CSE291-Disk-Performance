@@ -16,7 +16,7 @@ from random import *
 from math import *
 
 wr_arr = [0, 25, 50, 75, 100]
-qdep_arr = [1] + [x * 4 + 4 for x in range(15)]
+qdep_arr = [1]
 rdsz_arr = [1] + [x * 4 + 4 for x in range(63)]
 wrsz_arr = [1] + [x * 4 + 4 for x in range(63)]
 rrnd_arr = [0, 50, 100]
@@ -36,7 +36,7 @@ samples = 10000
 # Generate workload data
 for i in range(samples):
 	# Clear caches
-	clear_cache = """echo "123456" | sudo -S sh -c 'echo 3 >/proc/sys/vm/drop_caches' """	
+	clear_cache = """echo "123456" | sudo -S sh -c 'echo 3 >/proc/sys/vm/drop_caches' """
  	subprocess.check_output(clear_cache, shell=True)
 
 	wr = choice(wr_arr)
@@ -51,12 +51,10 @@ for i in range(samples):
 	input_str = """
 		echo %s | sudo -S ../src/fitness --device /dev/%s --seed %s \
 		--wr %s --qdep %s --rdsz %s --wrsz %s --rrnd %s --wrnd %s \
-		--rd_stride %s --wr_stride %s \
-		--warm 0 --test 10 --direct  
+		--warm 0 --test 10 --direct
 	""" % ("123456", device_name, str(randint(0, 1000000000)), \
 		str(wr), str(qdep), str(rdsz), str(wrsz), str(rrnd), str(wrnd), \
-		str(rd_stride), str(wr_stride) \
-	)			
+	)
 	result = subprocess.check_output(input_str, shell=True)
 
 	print "Testing complete."
@@ -79,7 +77,7 @@ for i in range(samples):
 
 result_file.close()
 
-# Generate latex pdf 
+# Generate latex pdf
 subprocess.check_output("cp result.txt ../../guide/disk.dat", shell=True)
 os.chdir("../../guide/")
 subprocess.check_output("./guide < disk.in", shell=True)
@@ -103,14 +101,13 @@ with open("disk_fit.txt") as f:
 		if data[0] == 'n':
 			test_set.append((float(data[2]), float(data[3])))
 		else:
-			train_set.append((float(data[2]), float(data[3])))			
+			train_set.append((float(data[2]), float(data[3])))
 	# Calculation
 	MAE = sum( [abs(x[0] - x[1]) for x in test_set] ) / len(test_set)
 	MRE = sum([abs(x[0] - x[1]) / x[0] for x in test_set]) / len(test_set)
 	SSE = sum([abs(x[0] - x[1]) ** 2 for x in test_set])
-	avg = sum([x[0] for x in test_set]) / len(test_set)	
+	avg = sum([x[0] for x in test_set]) / len(test_set)
 	SST = sum([(x[0] - avg) ** 2 for x in test_set])
-	
+
 	R = 1 - SSE / SST
 	print "MSE: %s\n MRE: %s\n R: %s\n" % (str(MAE), str(MRE), str(R))
-
