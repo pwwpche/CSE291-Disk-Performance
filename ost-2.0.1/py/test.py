@@ -17,8 +17,8 @@ from math import *
 
 wr_arr = [0, 25, 50, 75, 100]
 qdep_arr = [1]
-rdsz_arr = [1] + [x * 4 + 4 for x in range(63)]
-wrsz_arr = [1] + [x * 4 + 4 for x in range(63)]
+rdsz_arr = [3]
+wrsz_arr = [3]
 rrnd_arr = [0, 50, 100]
 wrnd_arr = [0, 50, 100]
 rd_stride_arr = [1, 64, 128, 256]
@@ -30,7 +30,7 @@ res = []
 first = True
 device_name = raw_input("Device name?")
 
-samples = 10000
+samples = 300
 
 
 # Generate workload data
@@ -55,8 +55,10 @@ for i in range(samples):
 	""" % ("123456", device_name, str(randint(0, 1000000000)), \
 		str(wr), str(qdep), str(rdsz), str(wrsz), str(rrnd), str(wrnd), \
 	)
-	result = subprocess.check_output(input_str, shell=True)
 
+	
+	result = subprocess.check_output(input_str, shell=True)
+	
 	print "Testing complete."
 
 	titles, numbers = result.split("\n")[0].split(), result.split("\n")[1].split()
